@@ -12,13 +12,14 @@ class SSOString {
 		} _bigString;
 		struct {
 			char _length = 0;
-			char _data[sizeof(_bigString) - sizeof(char)]{};
+			char _data[sizeof(_bigString) - sizeof(char)]{}; // not null terminated (one symbol additional size)
 		} _smallString;
 	};
 
 	void copyFrom(const SSOString& data);
 	void free();
 
+	void copyToSmallString(const char* str, const size_t length);
 	bool isSmallString() const;
 public:
 
