@@ -17,7 +17,7 @@ SSOString& SSOString::operator+=(const SSOString& other) {
 	size_t otherLength = other.length();
 
 	//result is bigstring
-	if (thisLength + otherLength > sizeof(size_t) + sizeof(char*)) {
+	if (thisLength + otherLength > sizeof(size_t) + sizeof(char*) - sizeof(char)) {
 		char* newData = new char[thisLength + otherLength + 1];
 		for (int i = 0; i < thisLength; i++) {
 			newData[i] = (isSmallString()) ? (_smallString._data[i]) : (_bigString._data[i]);
@@ -34,7 +34,7 @@ SSOString& SSOString::operator+=(const SSOString& other) {
 	}
 	//result is smallstring (both this and other are smallstring)
 	else {
-		char newData[sizeof(size_t) + sizeof(char*)];
+		char newData[sizeof(size_t) + sizeof(char*) - sizeof(char)];
 		for (int i = 0; i < thisLength; i++) {
 			newData[i] = _smallString._data[i];
 		}
@@ -49,13 +49,12 @@ SSOString& SSOString::operator+=(const SSOString& other) {
 
 //not using strcpy because _smallString._data is not null terminated
 void SSOString::copyToSmallString(const char* str, const size_t length) {
-	if (length > sizeof(size_t) + sizeof(char*)) {
+	if (length > sizeof(size_t) + sizeof(char*) - sizeof(char)) {
 		throw std::exception("is not SmallString");
 	}
 	for (int i = 0; i < length; i++) {
 		_smallString._data[i] = str[i];
 	}
-	_smallString._length = length << 1;
 }
 
 SSOString::SSOString(const char* data) {
@@ -64,7 +63,7 @@ SSOString::SSOString(const char* data) {
 	}
 
 	int curlen = strlen(data);
-	if (curlen > sizeof(size_t) + sizeof(char*)) {
+	if (curlen > sizeof(size_t) + sizeof(char*) - sizeof(char)) {
 		_bigString._length = (curlen << 1) + 1;
 		_bigString._data = new char[curlen + 1];
 		strcpy(_bigString._data, data);
@@ -149,8 +148,8 @@ SSOString SSOString::substr(size_t beginIndex, size_t endIndex) const {
 	}
 
 	//result is smallstring (avoid heap allocation)
-	if (isSmallString() || endIndex - beginIndex + 1 <= sizeof(size_t) + sizeof(char*)) {
-		char result[sizeof(size_t) + sizeof(char*) + 1];
+	if (isSmallString() || endIndex - beginIndex + 1 <= sizeof(size_t) + sizeof(char*) - sizeof(char)) {
+		char result[sizeof(size_t) + sizeof(char*) - sizeof(char) + 1];
 		for (size_t i = beginIndex; i <= endIndex; i++) {
 			result[i - beginIndex] = (isSmallString()) ? (_smallString._data[i]) : (_bigString._data[i]);
 		}

@@ -23,7 +23,6 @@ class SSOString {
 	bool isSmallString() const;
 public:
 
-	SSOString() = default;
 	SSOString(const char* data);
 	SSOString(const SSOString& other);
 	SSOString& operator=(const SSOString& other);
