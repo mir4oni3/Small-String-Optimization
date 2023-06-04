@@ -1,6 +1,6 @@
 # Small-String-Optimization
 Implementation of my own String class that uses Small String Optimization(SSO) for sufficiently small Strings
-#How it works
+# How it works
 My implementation of SSO is for strings, whose length is <= 15 (excluding \0).
 
 When length is > 15, there is heap allocation, and the fields are
